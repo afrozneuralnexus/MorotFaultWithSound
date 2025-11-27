@@ -1,0 +1,17 @@
+{
+    "class_names": [
+        "engine1_good",
+        "engine2_broken",
+        "engine3_heavyload"
+    ],
+    "input_shape": [
+        124,
+        80,
+        1
+    ],
+    "frame_length": 255,
+    "frame_step": 128,
+    "output_sequence_length": 16000,
+    "sample_rate": 16000,
+    "model_type": "mel_spectrogram"
+}
