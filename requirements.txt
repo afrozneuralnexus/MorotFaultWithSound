@@ -1,4 +1,3 @@
-
 streamlit==1.51.0
 tensorflow==2.20.0
 numpy==2.3.5
@@ -10,16 +9,8 @@ scipy==1.16.0
 pandas==2.3.3
 resampy==0.4.3
 numba==0.62.1
-```
 
-### ✅ Expected Result:
 
-After deploying, you should see:
-```
-✅ Model loaded successfully
-✅ 30MB file size limit
-✅ No resampy errors
-✅ Audio analysis working
 
 
 
