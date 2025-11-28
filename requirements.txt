@@ -1,15 +1,25 @@
 
-streamlit
-tensorflow
-numpy
-librosa
-matplotlib
-seaborn
-soundfile
-scipy
-pandas
-resampy
-numba
+streamlit==1.51.0
+tensorflow==2.20.0
+numpy==2.3.5
+librosa==0.11.0
+matplotlib==3.10.0
+seaborn==0.13.2
+soundfile==0.13.1
+scipy==1.16.0
+pandas==2.3.3
+resampy==0.4.3
+numba==0.62.1
+```
+
+### ✅ Expected Result:
+
+After deploying, you should see:
+```
+✅ Model loaded successfully
+✅ 30MB file size limit
+✅ No resampy errors
+✅ Audio analysis working
 
 
 
