@@ -1,13 +1,14 @@
 streamlit>=1.50.0
 tensorflow>=2.15.0
-numpy>=1.24.0,<2.0.0
-librosa>=0.10.0,<0.11.0
+numpy>=1.24.0              # No upper limit - allows 2.x
+librosa>=0.10.0
 matplotlib>=3.7.0
 seaborn>=0.12.0
 soundfile>=0.12.0
 scipy>=1.10.0
 pandas>=2.0.0
-resampy==0.4.3
-numba==0.58.1
+resampy>=0.4.2             # Added to fix the resampy error
+numba>=0.57.0              # Required by librosa
 llvmlite==0.41.1
+
 
