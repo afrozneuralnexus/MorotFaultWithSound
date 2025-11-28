@@ -17,7 +17,7 @@ from datetime import datetime
 import pandas as pd
 
 # Constants
-MAX_FILE_SIZE_MB = 10
+MAX_FILE_SIZE_MB = 30
 SUPPORTED_FORMATS = ['wav', 'mp3', 'ogg', 'flac', 'm4a']
 MIN_AUDIO_DURATION = 0.5  # seconds
 
@@ -227,17 +227,26 @@ def check_audio_quality(audio, sr):
 def preprocess_audio(audio_bytes, metadata):
     """Preprocess audio file for prediction with improved error handling."""
     try:
-        # Load audio using librosa directly
-        audio, sr = librosa.load(
-            io.BytesIO(audio_bytes),
-            sr=metadata['sample_rate'],
-            mono=True,
-            duration=None,
-            res_type='kaiser_fast'
-        )
+        # Load audio using soundfile first (no resampling)
+        import soundfile as sf
+        
+        # Read audio data
+        audio, sr = sf.read(io.BytesIO(audio_bytes))
+        
+        # Convert to mono if stereo
+        if len(audio.shape) > 1:
+            audio = np.mean(audio, axis=1)
+        
+        # Resample if necessary using scipy (more reliable)
+        if sr != metadata['sample_rate']:
+            from scipy import signal
+            # Calculate the number of samples in the resampled audio
+            num_samples = int(len(audio) * metadata['sample_rate'] / sr)
+            audio = signal.resample(audio, num_samples)
+            sr = metadata['sample_rate']
         
         # Check audio quality
-        issues, warnings = check_audio_quality(audio, metadata['sample_rate'])
+        issues, warnings = check_audio_quality(audio, sr)
         
         if issues:
             for issue in issues:
@@ -270,15 +279,22 @@ def preprocess_audio(audio_bytes, metadata):
 
         return spectrogram, audio, issues, warnings
 
-    except librosa.util.exceptions.ParameterError as e:
-        st.error(f"❌ Audio format error: {e}")
-        st.info("Try converting your audio to WAV format with standard settings.")
-        return None, None, [str(e)], []
     except Exception as e:
-        st.error(f"❌ Error preprocessing audio: {e}")
+        error_msg = str(e)
+        
+        # Provide specific error messages
+        if "resampy" in error_msg.lower():
+            st.error("❌ Audio resampling error. The file format may be incompatible.")
+            st.info("💡 Try converting your audio to WAV format (16-bit PCM) before uploading.")
+        elif "soundfile" in error_msg.lower() or "libsndfile" in error_msg.lower():
+            st.error(f"❌ Audio format error: {error_msg}")
+            st.info("💡 Supported formats: WAV, MP3, OGG, FLAC. Try converting to WAV format.")
+        else:
+            st.error(f"❌ Error preprocessing audio: {error_msg}")
+        
         if st.checkbox("Show technical details", key="preprocess_error"):
             st.exception(e)
-        return None, None, [str(e)], []
+        return None, None, [error_msg], []
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
