@@ -9,6 +9,6 @@ scipy>=1.10.0
 pandas>=2.0.0
 resampy>=0.4.2             # Added to fix the resampy error
 numba>=0.57.0              # Required by librosa
-llvmlite==0.41.1
+
 
 
